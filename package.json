@@ -1,0 +1,66 @@
+{
+  "name": "chrome-extention",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "axios": "^0.21.4",
+    "cheerio": "^1.0.0-rc.10",
+    "concurrently": "^6.2.0",
+    "connect-mongo": "^4.5.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "fs": "0.0.1-security",
+    "http-proxy-middleware": "^2.0.1",
+    "iconv": "^3.0.0",
+    "mongoose": "^6.0.5",
+    "mysql2": "^2.3.0",
+    "nodemon": "^2.0.12",
+    "passport": "^0.4.1",
+    "passport-google-oauth20": "^2.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-gapi": "^0.1.2",
+    "react-google-login": "^5.2.2",
+    "react-icons": "^4.2.0",
+    "react-scripts": "4.0.3",
+    "react-slick": "^0.28.1",
+    "request": "^2.88.2",
+    "sequelize": "^6.6.5",
+    "sequelize-cli": "^6.2.0",
+    "slick-carousel": "^1.8.1",
+    "web-vitals": "^1.1.2"
+  },
+  "scripts": {
+    "client": "set PORT=8000 && react-scripts start",
+    "server": "cd server && nodemon server.js",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ],
+    "proxy": "http://localhost:8001/"
+  }
+}
