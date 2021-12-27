@@ -14,7 +14,7 @@ const connectDB = require('./config/db');
 require('dotenv').config({path: path.join(__dirname, "../credentials/.env")}); //dir수정
 
 // Mongoose
-connectDB();
+// connectDB();
 
 const api = require('./routes/api');
 const auth = require('./routes/auth');
