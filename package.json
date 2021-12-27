@@ -37,10 +37,7 @@
   "scripts": {
     "client": "set PORT=8000 && react-scripts start",
     "server": "cd server && nodemon server.js",
-    "start": "npm run server",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "npm run server"
   },
   "eslintConfig": {
     "extends": [
