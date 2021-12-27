@@ -35,7 +35,6 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "client": "set PORT=8000 && react-scripts start",
     "server": "cd server && nodemon server.js",
     "start": "npm run server"
   },

@@ -1,5 +1,4 @@
 // '/api' directory
-
 const express = require('express');
 const router = express.Router();
 const cheerio = require('cheerio');
