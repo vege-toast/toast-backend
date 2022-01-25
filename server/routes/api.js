@@ -7,7 +7,7 @@ const iconv1 = require('iconv').Iconv;
 const iconv_lite = require('iconv-lite');
 const fs = require('fs');
 const path = require('path');
-const User = require('../models/User');
+const User = require('../../models/User');
 require('dotenv').config({path: path.join(__dirname, "../credentials/.env")}); //dir수정
 
 // Service Domain
