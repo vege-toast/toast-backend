@@ -17,7 +17,7 @@ passport.deserializeUser((id, done) => {
 passport.use(new GoogleStrategy({
         clientID: process.env.OAUTH2_GOOGLE_CLIENT_ID,
         clientSecret: process.env.OAUTH2_GOOGLE_CLIENT_SECRET_ID,
-        callbackURL: '/auth/google/callback'
+        callbackURL: process.env.REDIRECTION_URL
     }, async (accessToken, refreshToken, profile, done) => {
         // MongoDB    
         try {
