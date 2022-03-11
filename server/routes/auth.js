@@ -30,13 +30,14 @@ router.get('/google',
   
 );
 
-router.get(
-  '/google/callback',
-  passport.authenticate('google', {failureRedirect: '/test'}), 
+router.get('/google/callback', passport.authenticate('google', {
+  successRedirect: '/',
+  failureRedirect: '/test'
+  }), 
   (req, res) => {
   console.log(req.user);
   console.log("로그인 완료");
-  res.redirect('http://localhost:8000/');
+  res.send(req.user);
 });
 
 module.exports = router;
