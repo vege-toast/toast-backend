@@ -31,20 +31,23 @@ app.use(
         secret:'keyboard cat', 
         resave: false, 
         saveUninitialized:false,
-        store: MongoStore.create({//session 저장장소
+        store: MongoStore.create({ //session 저장장소
             mongoUrl: process.env.MONGO_URI
         })
     })
 );
 
+app.use(express.json()); // Express v4.16.0 기준 built-in body-parser 포함
+app.use(express.urlencoded({extend:true}));
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
+app.use(cookieParser());
+
 // passport setting
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use(express.json()); // Express v4.16.0 기준 built-in body-parser 포함
-app.use(express.urlencoded({extend:true}));
-app.use(cors());
-app.use(cookieParser());
 
 // Routes
 app.use('/api', api);
