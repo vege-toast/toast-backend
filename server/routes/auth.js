@@ -1,10 +1,9 @@
 const express  = require('express');
 const router   = express.Router();
 const passport = require('../config/passport.js');
-const auth = require('../middleware/auth')
 
 router.get('/', (req, res) => {//로그인 상태 확인
-    if(auth){
+    if(req.isAuthenticated()){
         console.log(req.user);
         res.send(req.user);
     }else{
@@ -35,6 +34,7 @@ router.get(
   '/google/callback',
   passport.authenticate('google', {failureRedirect: '/test'}), 
   (req, res) => {
+  console.log(req.user);
   console.log("로그인 완료");
   res.redirect('http://localhost:8000/');
 });
