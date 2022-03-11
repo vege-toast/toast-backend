@@ -3,7 +3,7 @@ const router   = express.Router();
 const passport = require('../config/passport.js');
 
 router.get('/', (req, res) => {//로그인 상태 확인
-    if(req.isAuthenticated()){
+    if(req.user){
         console.log(req.user);
         res.send(req.user);
     }else{
