@@ -1,5 +1,5 @@
 
-const User = require('../../models/User');
+const User = require('../models/User');
 
 exports.findAll = async (req, res) => {
     let user = null;

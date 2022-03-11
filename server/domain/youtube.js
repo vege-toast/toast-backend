@@ -46,13 +46,6 @@ exports.popularVideo = (req, res) => {
 
 exports.searchVideo = async (req, res) => {
     var keyword = req.body.keyword;
-        
-    try {
-        const dbRes = await User.updateOne({_id:req.session.passport.user}, {$addToSet: {youtubeKeyword: keyword}});
-    } catch (err) {
-        // 비로그인은 키워드 저장 과정 없이 에러처리 후 영상만 제공, 모듈을 찢는 과정이 필요
-        console.log(err);
-    }
 
     // 검색 필터 기준값
     // order, relevance.. 등

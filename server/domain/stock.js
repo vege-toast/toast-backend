@@ -7,6 +7,9 @@ const User = require('../models/User');
 const axios = require('axios');
 require('dotenv').config({path: path.join(__dirname, "../credentials/.env")}); //dir수정
 
+// auth
+const auth = require('../middleware/auth.js');
+
 // load StockDirection (상한, 하한)
 let stockDirection = {}
 fs.readFile('../server/data/stockDirection.json', 'utf8', (err, jsonFile) => {
@@ -65,12 +68,15 @@ fs.readFile('../server/data/stockCodeUrl_pc.json', 'utf8', (err, jsonFile) => {
 })
 
 exports.getStockInfo = async (req, res) => {
-    const title = req.body.keyword;
-  try{
-    const dbRes = await User.updateOne({_id:req.session.passport.user}, {$addToSet: {stockKeyword: title}});
-  } catch (err) {
-    console.log(err);
+  const title = req.body.keyword;
+  if (req.isAuthenticated()){
+    try{
+      const dbRes = await User.updateOne({_id:req.session.passport.user}, {$addToSet: {stockKeyword: title}});
+    } catch (err) {
+      console.log(err);
+    }
   }
+  
   const apiUrl = stockCodeUrl[title];
   const stockInfo = {};
   if(apiUrl === undefined) {

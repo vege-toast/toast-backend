@@ -11,11 +11,16 @@ const User = require('../models/User');
 require('dotenv').config({path: path.join(__dirname, "../credentials/.env")}); //dir수정
 
 // Service Domain
+const newsService=require('../domain/news.js');
+const weatherService=require('../domain/weather.js');
 const youtubeService = require('../domain/youtube.js');
 const stockService = require("../domain/stock.js")
 
 // DAO Domain
 const youtubeKeywordDao = require('../database/keyword/youtube.js');
+
+// auth
+const auth = require('../middleware/auth.js');
 
 // ------------------------------------------------------------------
 // Naver News API
@@ -25,112 +30,13 @@ const youtubeKeywordDao = require('../database/keyword/youtube.js');
 const request = require('request');
 const { default: axios } = require('axios');
 
-router.get('/news',async(req,res)=>{//핫토픽 다음 뉴스를 크롤링을 이용해 가져옴 
-  const url=`https://news.daum.net/`;
-  const options={
-    url: url,
-    method: 'get',
-  };
+//뉴스 api
+router.get('/news',newsService.getNews);//핫토픽 다음 뉴스를 크롤링을 이용해 가져옴 
+router.post('/news',newsService.postNews);//키워드 기반으로 크롤링하여 뉴스 가져옴
 
-  axios(options).then((response)=>{
-    if(response.status == 200){
-      const $=cheerio.load(response.data);
-      const newsResult=[];
-      const list_arr=$(".item_issue");
-      list_arr.map((idx,li)=>{
-        newsResult[idx]={
-          url: $(li).find("a").attr('href'),
-          thumb: $(li).find("a>img").attr('src'),
-          title:$(li).find(".cont_thumb>.tit_thumb>a").text(),
-          comp:$(li).find(".cont_thumb>.info_thumb").text(),
-        }
-      })
-      res.status(200);
-      res.send(newsResult);
-    }
-  }).catch((error)=>{
-    console.error(error);
-  });
-});
-
-
-router.post('/news',(req,res)=>{//키워드 기반으로 크롤링하여 뉴스 가져옴
-  const url=`https://search.naver.com/search.naver?where=news&sm=tab_jum&query=${encodeURI(req.body.keyword)}`;
-  const options={
-    url: url,
-    method: 'get'
-  };
-  axios(options).then((response)=>{
-    if(response.status == 200){
-      //원래 인코딩이 utf-8이라 iconv 사용하지않음
-      const $=cheerio.load(response.data);
-      const newsResult=[];
-      const list_arr=$(".list_news>li>.news_wrap");
-      list_arr.map((idx, div)=>{
-        newsResult[idx]={
-          title: $(div).find(".news_tit").attr("title"),
-          url:$(div).find(".news_tit").attr("href"),
-          description:$(div).find(".news_dsc").text().trim(),
-          thumb:$(div).find(".dsc_thumb>img").attr("src"),
-          comp:$(div).find("a.info.press").text().replace("언론사 선정",''),
-        }
-      })
-      res.send(newsResult);
-    }
-  }).catch((error)=>{
-    console.error(error);
-  });
-});
-
-
-
-router.get(`/weather`,(req,res)=>{// default 위치인 서울 중구의 날씨 가져옴
-  const url=`https://api.openweathermap.org/data/2.5/weather?lat=37.5555892070291&lon=126.981204133005&appid=${process.env.WEATHER_API_KEY}`;
-  axios.get(url).then((response)=>{
-    if(response.status==200){
-      const result= response.data;
-      const weatherResult={
-        main : result.main,
-        icon : `http://openweathermap.org/img/wn/${result.weather[0].icon}@2x.png`,
-        addr : `서울특별시 중구 회현동1가`,
-      }
-      res.status(200).set('charset=utf-8');  
-      res.send(weatherResult); //string 값으로 받아옴
-    }
-  }).catch((error)=>{
-    console.log(error);
-  });
-});
-
-router.post(`/weather`,(req,res)=>{//특정 위치의 날씨 가져옴
-  const{location}=req.body;
- // const url=`https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${process.env.WEATHER_API_KEY}`;
-  const url=`https://api.openweathermap.org/data/2.5/weather`;
-  const params={
-    lat:location.lat,
-    lon:location.lon,
-    appid:process.env.WEATHER_API_KEY,
-  };
-  const options={
-    url:url,
-    method:'get',
-    params:params,
-  };
-  axios(options).then((response)=>{
-    if(response.status==200){
-      const result= response.data;
-      const weatherResult={
-        main : result.main,
-        icon : `http://openweathermap.org/img/wn/${result.weather[0].icon}@2x.png`,
-        addr : location.address,
-      }
-      res.status(200).set('charset=utf-8');  
-      res.send(weatherResult); //string 값으로 받아옴
-    }
-  }).catch((error)=>{
-    console.log(error);
-  })
-});
+//날씨 api
+router.get(`/weather`,weatherService.getWeather);// default 위치인 서울 중구의 날씨 가져옴
+router.post(`/weather`,weatherService.postWeather);//특정 위치의 날씨 가져옴
 
 // ------------------------------------------------------------------
 // YOUTUBE DATA API v3. Search
@@ -147,34 +53,38 @@ router.post('/youtube', youtubeService.searchVideo)
 // Youtube Keyword of User
 // ------------------------------------------------------------------
 
-router.get('/youtube/keyword', async (req, res) => {
+router.get('/youtube/keyword', auth.isLogin, async (req, res) => {
   let user = null;
+  let keywordList = new Array();
+
   try {
     user = await User.findOne({_id:req.session.passport.user});
-    console.log(user + "'s Youtube Keyword Search is Successed");
   } catch (err) {
-    console.error(err);
+    console.error("not Logined");
     res.status(504).send("Not Logined");
   }
 
   if (user.youtubeKeyword.length == 0){
     res.status(200).send("NO DATA");
   }else{
-    let keywordList = new Array();
     for(var i = 0; i < user.youtubeKeyword.length; i++){
       keywordList.push(user.youtubeKeyword[i]);
     }
     res.send(keywordList);
   }
 })
-router.delete('/youtube/keyword', async (req, res) => {
+router.delete('/youtube/keyword', auth.isLogin, async (req, res) => {
+  if (!auth.isLogin()){
+    console.log("Not Logined");
+    res.status(200).send("Not Logined");
+  }
   try {
     result = await User.updateOne({_id:req.session.passport.user}, {$pull: {youtubeKeyword : req.body.keyword}});
     console.log(req.body.keyword + " is Deleted");
     res.status(200).send("DELETE SUCCESS");
   } catch (err) {
     console.error(err);
-    res.status(504).send("Not Logined || Keyword ERROR");
+    res.status(504).send("Delete Keyword ERROR");
   }
 })
 
@@ -192,20 +102,20 @@ router.post('/stock', stockService.getStockInfo)
 // Stock Keyword of User
 // ------------------------------------------------------------------
 
-router.get('/stock/keyword', async (req, res) => {
+router.get('/stock/keyword', auth.isLogin, async (req, res) => {
   let user = null;
+  let keywordList = new Array();
+
   try {
     user = await User.findOne({_id:req.session.passport.user});
-    console.log(user + "'s Stock Keyword Search is Successed");
   } catch (err) {
     console.error(err);
-    res.status(504).send("Not Logined");
+    res.status(504).send("USER NOT FOUND");
   }
 
   if (user.stockKeyword.length == 0){
     res.status(200).send("NO DATA");
   }else{
-    let keywordList = new Array();
     for(var i = 0; i < user.stockKeyword.length; i++){
       keywordList.push(user.stockKeyword[i]);
     }
@@ -213,14 +123,15 @@ router.get('/stock/keyword', async (req, res) => {
   }
 })
 
-router.delete('/stock/keyword', async (req, res) => {
+router.delete('/stock/keyword', auth.isLogin, async (req, res) => {
+
   try {
     let result = await User.updateOne({_id:req.session.passport.user}, {$pull: {stockKeyword : req.body.keyword}});
     console.log(req.body.keyword + " is Deleted");
     res.status(200).send("DELETE SUCCESS");
   } catch (err) {
     console.error(err);
-    res.status(504).send("Not Logined || Keyword ERROR");
+    res.status(504).send("Delete Keyword ERROR");
   }
 })
 

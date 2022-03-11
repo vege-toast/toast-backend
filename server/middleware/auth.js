@@ -1,6 +1,9 @@
-const isLogin = (req, res) => {
-    if(req.isAuthenticated()) return true;
-    else return false;
+exports.isLogin = (req, res, next) => {
+    if(req.isAuthenticated()){
+        next();
+    }
+    else {
+        res.status(401).send("Unauthorized Access");
+    }
 }
 
-module.exports = isLogin
