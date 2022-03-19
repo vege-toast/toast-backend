@@ -5,11 +5,17 @@ const path = require('path');
 require('dotenv').config({path: path.join(__dirname, "../credentials/.env")}); //dir수정
 
 passport.serializeUser((user, done) => {
+    console.log("직렬화 : ")
+    console.log(user.id);
     done(null, user.id);
 });
 
 passport.deserializeUser((id, done) => {
+    console.log("역직렬화 이전 아이디 확인 : ")
+    console.log(id);
     User.findById(id, (err, user) => {
+        console.log("역 직렬화 : ");
+        console.log(user);
         done(err, user);
     })
 });
