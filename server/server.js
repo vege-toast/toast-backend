@@ -31,6 +31,10 @@ app.use(
         secret:'keyboard cat', 
         resave: false, 
         saveUninitialized:false,
+        cookie: { 
+            secure: true, 
+            maxAge: new Date(Date.now() + 3600000) 
+        }, 
         store: MongoStore.create({ //session 저장장소
             mongoUrl: process.env.MONGO_URI
         })
