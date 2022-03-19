@@ -11,7 +11,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-    console.log("역직렬화 이전 아이디 확인 : ")
+    console.log("역직렬화 이전 아이디 확인 : ");
     console.log(id);
     User.findById(id, (err, user) => {
         console.log("역 직렬화 : ");

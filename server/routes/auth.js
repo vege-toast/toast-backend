@@ -5,7 +5,8 @@ const passport = require('../config/passport.js');
 router.get('/', (req, res) => {//로그인 상태 확인
   res.header("Access-Control-Allow-Origin", "http://localhost:8000");
   res.header("Access-Control-Allow-Credentials", "true");
-
+  console.log("세션 값 조회");
+  console.log(req.session);
     if(req.user){
         console.log(req.user);
         res.status(200);

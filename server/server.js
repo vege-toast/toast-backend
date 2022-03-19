@@ -47,7 +47,7 @@ app.use(cors({
     origin: 'http://localhost:8000',
     credentials: 'true'
 }));
-app.use(cookieParser());
+app.use(cookieParser('keyboard cat'));
 
 // passport setting
 app.use(passport.initialize());
