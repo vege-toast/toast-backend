@@ -5,10 +5,10 @@ const passport = require('../config/passport.js');
 router.get('/', (req, res) => {//로그인 상태 확인
     if(req.user){
         console.log(req.user);
-        res.statusCode(200);
+        res.status(200);
         res.send(req.user);
     }else{
-        res.statusCode(504);
+        res.status(504);
         res.send(false);
     }
 })
