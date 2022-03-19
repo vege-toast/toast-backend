@@ -32,7 +32,7 @@ app.use(
         resave: false, 
         saveUninitialized:false,
         cookie: { 
-            secure: true, 
+            secure: false, 
             maxAge: new Date(Date.now() + 3600000) 
         }, 
         store: MongoStore.create({ //session 저장장소
