@@ -26,7 +26,6 @@ const port = process.env.PORT || 8001;
 // const {sequelize} = require('./database/models');
 
 // Sessions
-app.enable('trust proxy');
 app.use(
     session({
         secret:'keyboard cat', 
