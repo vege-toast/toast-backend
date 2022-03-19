@@ -40,6 +40,7 @@ router.get('/google',
 );
 
 router.get('/google/callback', passport.authenticate('google', {
+  successRedirect: 'localhost:8000',
   failureRedirect: '/test'
   }), 
   (req, res) => {
