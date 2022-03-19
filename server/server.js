@@ -40,7 +40,7 @@ app.use(
 app.use(express.json()); // Express v4.16.0 기준 built-in body-parser 포함
 app.use(express.urlencoded({extend:true}));
 app.use(cors({
-    origin: true,
+    origin: '*',
     credentials: true
 }));
 app.use(cookieParser());

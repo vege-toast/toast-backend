@@ -11,6 +11,15 @@ router.get('/', (req, res) => {//로그인 상태 확인
     }
 })
 
+router.post('/', (req, res) => {//로그인 상태 확인
+  if(req.user){
+      console.log(req.user);
+      res.send(req.user);
+  }else{
+      res.send(false);
+  }
+})
+
 router.get('/test', (req, res) => {
   res.send("Failure Redirected from passport");
 })
@@ -31,7 +40,6 @@ router.get('/google',
 );
 
 router.get('/google/callback', passport.authenticate('google', {
-  successRedirect: 'http://localhost:8000',
   failureRedirect: '/test'
   }), 
   (req, res) => {
