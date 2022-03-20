@@ -17,7 +17,7 @@ const youtubeService = require('../domain/youtube.js');
 const stockService = require("../domain/stock.js")
 
 // DAO Domain
-const youtubeKeywordDao = require('../database/keyword/youtube.js');
+// const youtubeKeywordDao = require('../database/keyword/youtube.js');
 
 // auth
 const auth = require('../middleware/auth.js');
