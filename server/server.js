@@ -35,7 +35,8 @@ app.use(
         }, 
         store: MongoStore.create({ //session 저장장소
             mongoUrl: process.env.MONGO_URI
-        })
+        }),
+        proxy:true,
     })
 );
 
