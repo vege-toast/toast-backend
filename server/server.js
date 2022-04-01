@@ -24,19 +24,22 @@ const app = express();
 const port = process.env.PORT || 8001;
 
 // Sessions
+app.set('trust proxy');
 app.use(
     session({
         secret:'keyboard cat', 
         resave: false, 
         saveUninitialized:false,
+        proxy:true,
         cookie: { 
             secure: false, 
-            maxAge: new Date(Date.now() + 3600000) 
+            maxAge: new Date(Date.now() + 3600000) ,
+            httpOnly:false,
         }, 
         store: MongoStore.create({ //session 저장장소
             mongoUrl: process.env.MONGO_URI
         }),
-        proxy:true,
+    
     })
 );
 
